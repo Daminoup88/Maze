@@ -1,5 +1,6 @@
 import random
 import pygame
+import time
 
 class Edge:
     def __init__(self, start, end):
@@ -22,7 +23,7 @@ class Maze:
         self.maze_array = []
         self.generate_maze()
         self.transform_maze_to_array()
-        self.distanceMap = self.init_distance_map()
+        self.distance_map = self.init_distance_map()
         self.balayage()
 
     def init_distance_map(self):
@@ -38,18 +39,18 @@ class Maze:
         hasChanged = False
         for x in range(self.n * 2 + 1):
             for y in range(self.m * 2 + 1):
-                if (self.distanceMap[x][y] != 1000 and self.distanceMap[x][y] != 0):
+                if (self.distance_map[x][y] != 1000 and self.distance_map[x][y] != 0):
 
                     # determine le minimum des cases voisines
                     minCase = 1000
-                    if (self.distanceMap[x-1][y] < minCase): minCase = self.distanceMap[x-1][y]
-                    if (self.distanceMap[x+1][y] < minCase): minCase = self.distanceMap[x+1][y]
-                    if (self.distanceMap[x][y-1] < minCase): minCase = self.distanceMap[x][y-1]
-                    if (self.distanceMap[x][y+1] < minCase): minCase = self.distanceMap[x][y+1]
+                    if (self.distance_map[x-1][y] < minCase): minCase = self.distance_map[x-1][y]
+                    if (self.distance_map[x+1][y] < minCase): minCase = self.distance_map[x+1][y]
+                    if (self.distance_map[x][y-1] < minCase): minCase = self.distance_map[x][y-1]
+                    if (self.distance_map[x][y+1] < minCase): minCase = self.distance_map[x][y+1]
 
                     # si c'est la même ne pas changer
-                    if (minCase + 1 != self.distanceMap[x][y] and minCase + 1 < 1000):
-                        self.distanceMap[x][y] = minCase + 1
+                    if (minCase + 1 != self.distance_map[x][y] and minCase + 1 < 1000):
+                        self.distance_map[x][y] = minCase + 1
                         hasChanged = True
         
         if(hasChanged):
@@ -62,23 +63,23 @@ class Maze:
         border = []
         sommet = self.start[0]
 
-        def get_neighbors(cell):
+        def get_neighbours(cell):
             x, y = divmod(cell, self.m)
-            voisins = []
+            neighbours = []
             if x > 0:  # North
-                voisins.append(Edge(cell, cell - self.m))
+                neighbours.append(Edge(cell, cell - self.m))
             if x < self.n - 1:  # South
-                voisins.append(Edge(cell, cell + self.m))
+                neighbours.append(Edge(cell, cell + self.m))
             if y > 0:  # West
-                voisins.append(Edge(cell, cell - 1))
+                neighbours.append(Edge(cell, cell - 1))
             if y < self.m - 1:  # East
-                voisins.append(Edge(cell, cell + 1))
-            return voisins
+                neighbours.append(Edge(cell, cell + 1))
+            return neighbours
 
         while sommet >= 0:
-            for neighbor in get_neighbors(sommet):
-                if sommets[neighbor.end] == 0:
-                    border.append(neighbor)
+            for neighbour in get_neighbours(sommet):
+                if sommets[neighbour.end] == 0:
+                    border.append(neighbour)
 
             sommet = -1
 
@@ -109,13 +110,11 @@ class Maze:
                 array[(x1 + x2) + 1][y1 * 2 + 1] = 0
         self.maze_array = array
 
-    def display_maze(self, screen, cell_size=10, debug_array=[]):
+    def display_maze(self, screen, cell_size=10, debug=False):
         for y in range(len(self.maze_array)):
             for x in range(len(self.maze_array[y])):
                 if self.maze_array[y][x] == 1:
                     color = (0, 0, 0)
-                # elif self.maze_array[y][x] == 2:
-                #     color = (0, 0, 255)
                 else:
                     color = (255, 255, 255)
                 pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))
@@ -123,24 +122,32 @@ class Maze:
                     pygame.draw.rect(screen, (0, 255, 0), (x * cell_size, y * cell_size, cell_size, cell_size))
                 elif x == self.m * 2 - 1 and y == self.n * 2 - 1:
                     pygame.draw.rect(screen, (255, 0, 0), (x * cell_size, y * cell_size, cell_size, cell_size))
-        if len(debug_array) == len(self.maze_array):
+        if debug:
             font_size = cell_size // 2
             font = pygame.font.Font(None, font_size)
-            for y in range(len(debug_array)):
-                for x in range(len(debug_array[y])):
-                    if debug_array[y][x] != -1:
-                        text = font.render(str(debug_array[y][x]), True, (0, 0, 255))
+            for y in range(len(self.distance_map)):
+                for x in range(len(self.distance_map[y])):
+                    if self.distance_map[y][x] != -1:
+                        text = font.render(str(self.distance_map[y][x]), True, (0, 0, 255))
                         text_rect = text.get_rect(center=((x * cell_size) + cell_size // 2, (y * cell_size) + cell_size // 2))
                         screen.blit(text, text_rect)
     
     # Regenerate the maze and put a white square at the character's position
     def regenerate_maze(self, character_x, character_y):
         self.edges = []
+        t = time.time()
         self.generate_maze()
+        print("Maze generation time:", time.time() - t)
+        t = time.time()
         self.transform_maze_to_array()
+        print("Maze transformation time:", time.time() - t)
         self.maze_array[character_x][character_y] = 0
-        self.distanceMap = self.init_distance_map()
+        t = time.time()
+        self.distance_map = self.init_distance_map()
+        print("Distance map initialization time:", time.time() - t)
+        t = time.time()
         self.balayage()
+        print("Balayage time:", time.time() - t)
 
     def __str__(self):
         return "Maze of size " + str(self.n) + "x" + str(self.m)

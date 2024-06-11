@@ -1,9 +1,13 @@
 import pygame
 
 class Character:
-    def __init__(self, x, y):
+    def __init__(self, x, y, colour=(0, 0, 255)):
         self.x = x
         self.y = y
+        self.colour = colour
+
+    def set_color(self, colour):
+        self.colour = colour
 
     def move(self, distanceMap):
         min = 1000
@@ -24,4 +28,4 @@ class Character:
         self.y += move[1]
 
     def display_character(self, screen, cell_size):
-        pygame.draw.circle(screen, (0, 0, 255), (self.y * cell_size + cell_size // 2, self.x * cell_size + cell_size // 2), cell_size // 2)
+        pygame.draw.circle(screen, self.colour, (self.y * cell_size + cell_size // 2, self.x * cell_size + cell_size // 2), cell_size // 2)

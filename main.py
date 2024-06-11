@@ -1,10 +1,9 @@
 import pygame
-import time
 from Maze import Maze
 from Character import Character
 
-N = 15
-CELL_SIZE = 25
+N = 45
+CELL_SIZE = 10
 MAZE = Maze(N, N)
 CHARACTER = Character(1, 1)
 
@@ -38,8 +37,8 @@ def check_win():
 def play_one_turn():
     if not PAUSE_FLAG and not WON_FLAG and not LOST_FLAG:
         SCREEN.fill((0, 0, 0), rect=(0, 0, (N*2+1) * CELL_SIZE, (N*2+1) * CELL_SIZE))
-        MAZE.display_maze(SCREEN, CELL_SIZE, MAZE.distanceMap)
-        CHARACTER.move(MAZE.distanceMap)
+        MAZE.display_maze(SCREEN, CELL_SIZE, True)
+        CHARACTER.move(MAZE.distance_map)
         CHARACTER.display_character(SCREEN, CELL_SIZE)
         check_win()
         display("Press R to regenerate the maze, P to pause")
@@ -68,7 +67,7 @@ if __name__ == "__main__":
                 handle_keydown(event)
         
         t = int(pygame.time.get_ticks())
-        fps = 1
+        fps = 30
         if t % (1000 // fps) == 0:
             play_one_turn()
         
