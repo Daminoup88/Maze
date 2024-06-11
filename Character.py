@@ -6,7 +6,7 @@ class Character:
         self.y = y
         self.colour = colour
 
-    def set_color(self, colour):
+    def set_colour(self, colour):
         self.colour = colour
 
     def move(self, distanceMap):

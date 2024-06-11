@@ -111,13 +111,15 @@ class Maze:
         self.maze_array = array
 
     def display_maze(self, screen, cell_size=10, debug=False):
+        WALL_COLOUR = (0, 0, 0)
+        PATH_COLOUR = (255, 255, 255)
         for y in range(len(self.maze_array)):
             for x in range(len(self.maze_array[y])):
                 if self.maze_array[y][x] == 1:
-                    color = (0, 0, 0)
+                    colour = WALL_COLOUR
                 else:
-                    color = (255, 255, 255)
-                pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))
+                    colour = PATH_COLOUR
+                pygame.draw.rect(screen, colour, (x * cell_size, y * cell_size, cell_size, cell_size))
                 if x == 1 and y == 1:
                     pygame.draw.rect(screen, (0, 255, 0), (x * cell_size, y * cell_size, cell_size, cell_size))
                 elif x == self.m * 2 - 1 and y == self.n * 2 - 1:
