@@ -1,6 +1,6 @@
 import pygame
 
-class TextObject:
+class TextDisplay:
     def __init__(self, x, y, width, height, font_size=36, colour=(0, 255, 0)):
         self.rect = pygame.Rect(x, y, width, height)
         self.font = pygame.font.Font(None, font_size)

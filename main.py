@@ -1,7 +1,7 @@
 import pygame
 from Maze import Maze
 from Character import Character
-from TextObject import TextObject
+from TextDisplay import TextDisplay
 
 N = 45
 CELL_SIZE = 10
@@ -21,7 +21,7 @@ def create_screen(width, height):
 
 SCREEN = create_screen(len(MAZE.maze_array[0]) * CELL_SIZE, len(MAZE.maze_array) * CELL_SIZE)
 
-TEXT_DISPLAY = TextObject(0, (N*2+1) * CELL_SIZE, (N*2+1) * CELL_SIZE, 100)
+TEXT_DISPLAY = TextDisplay(0, (N*2+1) * CELL_SIZE, (N*2+1) * CELL_SIZE, 100)
 
 def handle_keydown(e):
     global PAUSE_FLAG, WON_FLAG, LOST_FLAG
