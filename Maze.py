@@ -23,6 +23,7 @@ class Maze:
         self.generate_maze()
         self.transform_maze_to_array()
         self.distanceMap = self.init_distance_map()
+        self.balayage()
 
     def init_distance_map(self):
         distanceMap = [[1000 for _ in range(len(self.maze_array))] for _ in range(len(self.maze_array[0]))]
@@ -113,15 +114,15 @@ class Maze:
             for x in range(len(self.maze_array[y])):
                 if self.maze_array[y][x] == 1:
                     color = (0, 0, 0)
-                elif self.maze_array[y][x] == 2:
-                    color = (0, 0, 255)
+                # elif self.maze_array[y][x] == 2:
+                #     color = (0, 0, 255)
                 else:
                     color = (255, 255, 255)
                 pygame.draw.rect(screen, color, (x * cell_size, y * cell_size, cell_size, cell_size))
-
-        pygame.draw.rect(screen, (0, 255, 0), (cell_size, cell_size, cell_size, cell_size))
-        pygame.draw.rect(screen, (255, 0, 0), (screen.get_width() - 2 * cell_size, screen.get_height() - 2 * cell_size, cell_size, cell_size))
-
+                if x == 1 and y == 1:
+                    pygame.draw.rect(screen, (0, 255, 0), (x * cell_size, y * cell_size, cell_size, cell_size))
+                elif x == self.m * 2 - 1 and y == self.n * 2 - 1:
+                    pygame.draw.rect(screen, (255, 0, 0), (x * cell_size, y * cell_size, cell_size, cell_size))
         if len(debug_array) == len(self.maze_array):
             font_size = cell_size // 2
             font = pygame.font.Font(None, font_size)
@@ -131,6 +132,15 @@ class Maze:
                         text = font.render(str(debug_array[y][x]), True, (0, 0, 255))
                         text_rect = text.get_rect(center=((x * cell_size) + cell_size // 2, (y * cell_size) + cell_size // 2))
                         screen.blit(text, text_rect)
+    
+    # Regenerate the maze and put a white square at the character's position
+    def regenerate_maze(self, character_x, character_y):
+        self.edges = []
+        self.generate_maze()
+        self.transform_maze_to_array()
+        self.maze_array[character_x][character_y] = 0
+        self.distanceMap = self.init_distance_map()
+        self.balayage()
 
     def __str__(self):
         return "Maze of size " + str(self.n) + "x" + str(self.m)
